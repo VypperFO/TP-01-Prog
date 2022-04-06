@@ -1,7 +1,57 @@
 package com.company;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.text.DecimalFormat;
+
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class UtilsTest {
+    public static final DecimalFormat df = new DecimalFormat("0.00");
+    int[][] tab = {
+            { 1, 2, 3 },
+            { 3, 4, 5 },
+            { 1, 2, 4 }
+    };
 
+    @ParameterizedTest(name = "Moyenne colonne {0} est {1}")
+    @CsvSource({
+            "0, 1.67",
+            "1, 2.67",
+            "2, 4.0"
+    })
+    public void moyenneEval(int col, double expectedResult) {
+        int[][] array = tab;
+
+        double actualResult = Utils.moyenneEval(array, col);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest(name="Plus grand élement de la colonne {0} est {1}")
+    @CsvSource({
+        "0, 3",
+        "1, 4",
+        "2, 5"
+    })
+    public void maxEval(int col, int expectedResult){
+        int[][] array = tab;
+
+        int actualResult = Utils.maxEval(array, col);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest(name="Plus petit élement de la colonne {0} est {1}")
+    @CsvSource({
+        "0, 1",
+        "1, 2",
+        "2, 3"
+    })
+    public void minEval(int col, int expectedResult){
+        int[][] array = tab;
+
+        int actualResult = Utils.minEval(array, col);
+        assertEquals(expectedResult, actualResult);
+    }
 }
