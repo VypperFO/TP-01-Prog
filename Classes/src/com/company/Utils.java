@@ -1,6 +1,10 @@
 package com.company;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
+
+import javax.sound.sampled.SourceDataLine;
 
 public class Utils {
     public static final DecimalFormat df = new DecimalFormat("0.00");
@@ -32,7 +36,8 @@ public class Utils {
      * @return Retourne l'élement le plus grand
      */
     public static int maxEval(int[][] tab, int choixCol) {
-        int max = tab[0][choixCol];
+        int max = 0; // Valeur maximal 
+        max = tab[0][choixCol];
         for (int i = 0; i < tab.length; i++)
             if (tab[i][choixCol] > max)
                 max = tab[i][choixCol];
@@ -46,7 +51,8 @@ public class Utils {
      * @return Retourne l'élement le plus petit
      */
     public static int minEval(int[][] tab, int choixCol) {
-        int min = tab[0][choixCol];
+        int min = 0; // Valeur minimal
+        min = tab[0][choixCol];
         for (int i = 0; i < tab.length; i++)
             if (tab[i][choixCol] < min)
                 min = tab[i][choixCol];
@@ -61,7 +67,7 @@ public class Utils {
      * @param valeurB Le deuxième entier
      */
     public static void permutation(int[][] tab, int valeurA, int valeurB) {
-        int[] valeurTemporaire = tab[valeurA];
+        int[] valeurTemporaire = tab[valeurA]; // Valeur temporaire
         tab[valeurA] = tab[valeurB];
         tab[valeurB] = valeurTemporaire;
     }
@@ -77,7 +83,7 @@ public class Utils {
      * @return Retourne l'élement à sa position finale
      */
     public static int partition(int[][] tab, int valeurGauche, int valeurDroite, int choixCol) {
-        int pivot = tab[valeurDroite][choixCol];
+        int pivot = tab[valeurDroite][choixCol]; // Entier pivot
         for (int i = valeurGauche; i < valeurDroite; i++) {
             if (tab[i][choixCol] < pivot) {
                 permutation(tab, valeurGauche, i);
@@ -121,15 +127,50 @@ public class Utils {
         }
     }
 
+    /**
+     * Permet de faire une fouille dichotomique par indirection d'une colonne d'un tableau 2D
+     * @param tableau Le tableau 2D
+     * @param valeurRecherche La valeur rechercher
+     * @param colonne La colonne à rechercher
+     * @return Retourne l'index si trouvé et -1 si il ne trouve rien
+     */
+    public static int fouilleDichoCol(int[][] tableau, int valeurRecherche, int colonne) {
+        int debut = 0; // Valeur du debut
+        int fin = tableau.length - 1; // Valeur de fin
+        int milieu = 0; // Valeur du millieu
+        boolean trouve = false; // Si valeur est trouvée
+
+        while (debut <= fin && !trouve) {
+            milieu = (debut + fin) / 2;
+
+            if (valeurRecherche == tableau[milieu][colonne])
+                trouve = true;
+            else if (valeurRecherche < tableau[milieu][colonne])
+                fin = milieu - 1;
+            else
+                debut = milieu + 1;
+        }
+
+        if (trouve)
+            return milieu;
+        else
+            return -1;
+    }
+    
+    // TODO Finir la fonction
+    public static void sauvergarde(String fileName, int[][] tab) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
+    }
+
     public static void main(String[] args) {
         int[][] tab = {
                 { 1, 2, 3, 4 },
-                { 3, 4, 5, 4 },
-                { 1, 2, 4, 5 }
+                { 2, 6, 5, 4 },
+                { 4, 10, 4, 5 }
         };
 
         int[][] tab02 = null;
 
-        quicksort(tab02, 1);
+        System.out.println(fouilleDichoCol(tab, 10, 1));
     }
 }
