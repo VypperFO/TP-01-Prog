@@ -51,8 +51,8 @@ public class View extends JFrame {
         tabStats = new JTable(modelStats);
         tabStats.setCellSelectionEnabled(false);
 
-        for (int j = 0; j < rowNames.length; j++) {
-            modelStats.setValueAt(rowNames[j], j, 0);
+        for (int i = 0; i < rowNames.length; i++) {
+            modelStats.setValueAt(rowNames[i], i, 0);
         }
 
         //
@@ -158,7 +158,13 @@ public class View extends JFrame {
     }
 
     public void btnQuitAction() {
-        System.exit(0);
+        int reponse = JOptionPane.showConfirmDialog(frame, "Voulez-vous sauvegarder?", "Quitter",
+                JOptionPane.YES_NO_CANCEL_OPTION);
+
+        if (reponse == JOptionPane.YES_OPTION)
+            System.exit(0);
+        else
+            System.exit(0);
     }
 
     public static void main(String[] args) {
