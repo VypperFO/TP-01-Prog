@@ -16,6 +16,11 @@ public class View extends JFrame {
     Dimension dimBtn = new Dimension(125, 25);
     String[] colNames = { "DA", "Examen 1", "Examen 2", "TP 1", "TP 2", "Total %" };
     String[] rowNames = { "Moyenne", "Note minimum", "Note maximum", "Nombre d'eleves" };
+    Integer[][] data = {
+            { 1, 2, 3, 4, 5, 6 },
+            { 2, 3, 5, 1, 5, 6 },
+            { 24, 6, 2, 4, 5, 6 }
+    };
 
     JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
     JFrame frame = new JFrame("2173242");
@@ -29,7 +34,9 @@ public class View extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
+        //
         // JTable
+        //
         modelNotes = new DefaultTableModel(colNames, 10) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -41,6 +48,17 @@ public class View extends JFrame {
 
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
+
+        for (int i = 0; i < modelNotes.getRowCount(); i++) {
+            for (int j = 0; j < modelNotes.getColumnCount(); j++) {
+                modelNotes.setValueAt(Integer.valueOf(data[2][2]), i, j);
+            }
+        }
+
+        modelNotes.setValueAt("dwbakjd", 2, 2);
+
+        int[][] tab = Utils.convertT2D(modelNotes);
+        System.out.println(tab[1][1]);
 
         modelStats = new DefaultTableModel(4, 6) {
             @Override

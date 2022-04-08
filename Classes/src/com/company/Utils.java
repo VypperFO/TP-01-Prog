@@ -3,6 +3,9 @@ package com.company;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import javax.swing.table.*;
+import java.awt.*;
+import javax.swing.*;
 
 import javax.sound.sampled.SourceDataLine;
 
@@ -11,7 +14,8 @@ public class Utils {
 
     /**
      * Permet de calculer la moyenne d'une colonne d'un tableau 2D
-     * @param array Le tableau 2D choisit
+     * 
+     * @param array    Le tableau 2D choisit
      * @param choixCol La colonne choisit
      * @return Retourne la moyenne avec deux decimales (.00)
      */
@@ -31,12 +35,13 @@ public class Utils {
 
     /**
      * Permet d'avoir le plus grand élement d'une colonne dans un tableau 2D
-     * @param tab Le tableau 2D choisit
+     * 
+     * @param tab      Le tableau 2D choisit
      * @param choixCol La colonne choisit
      * @return Retourne l'élement le plus grand
      */
     public static int maxEval(int[][] tab, int choixCol) {
-        int max = 0; // Valeur maximal 
+        int max = 0; // Valeur maximal
         max = tab[0][choixCol];
         for (int i = 0; i < tab.length; i++)
             if (tab[i][choixCol] > max)
@@ -46,7 +51,8 @@ public class Utils {
 
     /**
      * Permet d'avoir le plus petit élement d'une colonne dans un tableau 2D
-     * @param tab Le tableau 2D choisit
+     * 
+     * @param tab      Le tableau 2D choisit
      * @param choixCol La colonne choisit
      * @return Retourne l'élement le plus petit
      */
@@ -128,10 +134,12 @@ public class Utils {
     }
 
     /**
-     * Permet de faire une fouille dichotomique par indirection d'une colonne d'un tableau 2D
-     * @param tableau Le tableau 2D
+     * Permet de faire une fouille dichotomique par indirection d'une colonne d'un
+     * tableau 2D
+     * 
+     * @param tableau         Le tableau 2D
      * @param valeurRecherche La valeur rechercher
-     * @param colonne La colonne à rechercher
+     * @param colonne         La colonne à rechercher
      * @return Retourne l'index si trouvé et -1 si il ne trouve rien
      */
     public static int fouilleDichoCol(int[][] tableau, int valeurRecherche, int colonne) {
@@ -156,11 +164,29 @@ public class Utils {
         else
             return -1;
     }
-    
+
+    // TODO Fix l'esti de probleme de casting de mes couilles
+    public static int[][] convertT2D(DefaultTableModel tableau) {
+        int tabRow = tableau.getRowCount();
+        int tabCol = tableau.getColumnCount();
+        int[][] tableauEntiers = new int[tabRow][tabCol];
+
+        for (int i = 0; i < tabRow; i++) {
+            for (int j = 0; j < tabCol; j++) {
+                if (tableau.getValueAt(i, j).equals((int) tableau.getValueAt(i, j))) {
+                    tableauEntiers[i][j] = Integer.valueOf(String.valueOf(tableau.getValueAt(i, j)));
+                }
+            }
+        }
+
+        return tableauEntiers;
+    }
+
     // TODO Finir la fonction
-    //public static void sauvergarde(String fileName, int[][] tab) throws IOException {
-      //  BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
-    //}
+    // public static void sauvergarde(String fileName, int[][] tab) throws
+    // IOException {
+    // BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
+    // }
 
     public static void main(String[] args) {
         int[][] tab = {
@@ -171,6 +197,21 @@ public class Utils {
 
         int[][] tab02 = null;
 
-        System.out.println(fouilleDichoCol(tab, 10, 1));
+        DefaultTableModel modelNotes;
+        JTable tabNotes;
+        Object[][] data = {
+                { 1, 2, 3, 4 },
+                { 2, 3, 5, 1 },
+                { 24, 6, 2, 4 }
+        };
+        modelNotes = new DefaultTableModel(data, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tabNotes = new JTable(modelNotes);
+        tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
     }
 }
