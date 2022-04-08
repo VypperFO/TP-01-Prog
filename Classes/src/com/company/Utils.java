@@ -158,9 +158,9 @@ public class Utils {
     }
     
     // TODO Finir la fonction
-    public static void sauvergarde(String fileName, int[][] tab) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
-    }
+    //public static void sauvergarde(String fileName, int[][] tab) throws IOException {
+      //  BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
+    //}
 
     public static void main(String[] args) {
         int[][] tab = {
