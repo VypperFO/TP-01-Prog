@@ -13,14 +13,15 @@ public class View extends JFrame {
     DefaultTableModel modelNotes, modelStats;
 
     Dimension dimTxf = new Dimension(125, 25);
+    Dimension dimBtn = new Dimension(125, 25);
     String[] colNames = { "DA", "Examen 1", "Examen 2", "TP 1", "TP 2", "Total %" };
 
-    JPanel panCenter, panEst;
+    JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
     JFrame frame = new JFrame("2173242");
 
     public View() {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(new Dimension(600, 400));
+        frame.setMinimumSize(new Dimension(875, 350));
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
@@ -33,7 +34,7 @@ public class View extends JFrame {
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        modelStats = new DefaultTableModel();
+        modelStats = new DefaultTableModel(4, 6);
         tabStats = new JTable(modelStats);
 
         JScrollPane scroll = new JScrollPane(tabNotes);
@@ -60,35 +61,59 @@ public class View extends JFrame {
         txfTP02 = new JTextField("");
         txfTP02.setPreferredSize(dimTxf);
 
+        btnAjout = new JButton("Ajouter");
+        btnAjout.setPreferredSize(dimBtn);
+
+        btnModif = new JButton("Modifier");
+        btnModif.setPreferredSize(dimBtn);
+
+        btnSup = new JButton("Supprimer");
+        btnSup.setPreferredSize(dimBtn);
+
+        btnQuit = new JButton("Quitter");
+        btnQuit.setPreferredSize(dimBtn);
+
+        panBtnQuit = new JPanel();
+        panBtnQuit.setLayout(new BorderLayout());
+        panBtnQuit.add(btnQuit, BorderLayout.EAST);
+
         panCenter = new JPanel();
+        panCenter.setLayout(new BorderLayout(15, 15));
         panCenter.add(scroll, BorderLayout.CENTER);
-        panCenter.add(tabStats, BorderLayout.NORTH);
+        panCenter.add(tabStats, BorderLayout.SOUTH);
+
+        panLabTxf = new JPanel();
+        panLabTxf.setLayout(new GridLayout(5, 2, 5, 5));
+        panLabTxf.add(labDA);
+        panLabTxf.add(txfDA);
+        panLabTxf.add(labExam01);
+        panLabTxf.add(txfExam01);
+        panLabTxf.add(labExam02);
+        panLabTxf.add(txfExam02);
+        panLabTxf.add(labTP01);
+        panLabTxf.add(txfTP01);
+        panLabTxf.add(labTP02);
+        panLabTxf.add(txfTP02);
+
+        panBtn = new JPanel();
+        panBtn.setLayout(new FlowLayout());
+        panBtn.add(btnAjout);
+        panBtn.add(btnModif);
+        panBtn.add(btnSup);
 
         panEst = new JPanel();
-        panEst.setLayout(new FlowLayout());
-        panEst.add(labDA);
-        panEst.add(txfDA);
-        panEst.add(labExam01);
-        panEst.add(txfExam01);
-        panEst.add(labExam02);
-        panEst.add(labTP01);
-        panEst.add(txfTP01);
-        panEst.add(labTP02);
-        panEst.add(txfTP02);
-
-        btnAjout = new JButton("Ajouter");
-        btnModif = new JButton("Modifier");
-        btnSup = new JButton("Supprimer");
-        btnQuit = new JButton("Quitter");
-        btnQuit.addActionListener(e -> btnQuitAction());
+        panEst.setLayout(new BorderLayout());
+        panEst.add(panLabTxf, BorderLayout.NORTH);
+        panEst.add(panBtn, BorderLayout.CENTER);
 
         frame.add(panCenter, BorderLayout.WEST);
         frame.add(panEst, BorderLayout.EAST);
+        frame.add(panBtnQuit, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
 
     // Section méthodes maisons
-    
+
     // Section Listener
     public void btnQuitAction() {
         System.exit(0);
