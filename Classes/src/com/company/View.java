@@ -1,6 +1,9 @@
 package com.company;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -16,16 +19,19 @@ public class View extends JFrame {
     Dimension dimBtn = new Dimension(125, 25);
     String[] colNames = { "DA", "Examen 1", "Examen 2", "TP 1", "TP 2", "Total %" };
     String[] rowNames = { "Moyenne", "Note minimum", "Note maximum", "Nombre d'eleves" };
-    Integer[][] data = {
+    int[][] data = {
             { 1, 2, 3, 4, 5, 6 },
             { 2, 3, 5, 1, 5, 6 },
             { 24, 6, 2, 4, 5, 6 }
     };
 
+    public static int nbNoms;
+    public static String[][] tabNoms;
+
     JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
     JFrame frame = new JFrame("2173242");
 
-    public View() {
+    public View() throws IOException {
         //
         // Frame
         //
@@ -49,16 +55,22 @@ public class View extends JFrame {
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
 
+        // Lis le fichier
+        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
+        tabNoms = new String[nbNoms][5];
+        readFileTab("Classes/src/com/company/donnees.txt");
+
+        // Ecrit tout les chiffres au bon endroits
         for (int i = 0; i < modelNotes.getRowCount(); i++) {
             for (int j = 0; j < modelNotes.getColumnCount(); j++) {
-                modelNotes.setValueAt(Integer.valueOf(data[2][2]), i, j);
+                modelNotes.setValueAt(Integer.valueOf(tabNoms[i][j]), i, j);
             }
         }
 
-        modelNotes.setValueAt("dwbakjd", 2, 2);
-
-        int[][] tab = Utils.convertT2D(modelNotes);
-        System.out.println(tab[1][1]);
+        // Remplace le Total %
+        for (int i = 0; i < modelNotes.getRowCount(); i++) {
+            modelNotes.setValueAt(0, i, 5);
+        }
 
         modelStats = new DefaultTableModel(4, 6) {
             @Override
@@ -163,6 +175,32 @@ public class View extends JFrame {
     }
 
     // Section méthodes maisons
+    public static int countLinesFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        while (reader.readLine() != null)
+            nbNoms++;
+        return nbNoms;
+    }
+
+    public static String[][] readFileTab(String fileName) throws IOException {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            String[] tab;
+            int index = 0;
+
+            while ((line = reader.readLine()) != null) {
+                tab = line.split(" ");
+                tabNoms[index] = tab;
+                index++;
+            }
+
+            reader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return tabNoms;
+    }
 
     // Section Listener
 
@@ -185,7 +223,14 @@ public class View extends JFrame {
             System.exit(0);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         View v = new View();
+
+        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
+        tabNoms = new String[nbNoms][5];
+        readFileTab("Classes/src/com/company/donnees.txt");
+        for (int i = 0; i < nbNoms; i++) {
+            System.out.println(Arrays.toString(tabNoms[i]));
+        }
     }
 }

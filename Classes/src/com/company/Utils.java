@@ -1,8 +1,14 @@
 package com.company;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+
 import javax.swing.table.*;
 import java.awt.*;
 import javax.swing.*;
@@ -188,7 +194,7 @@ public class Utils {
     // BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
     // }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         int[][] tab = {
                 { 1, 2, 3, 4 },
                 { 2, 6, 5, 4 },
@@ -212,6 +218,5 @@ public class Utils {
         };
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
     }
 }
