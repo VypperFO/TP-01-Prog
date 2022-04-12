@@ -190,12 +190,6 @@ public class Utils {
         return tableauEntiers;
     }
 
-    // TODO Finir la fonction
-    // public static void sauvergarde(String fileName, int[][] tab) throws
-    // IOException {
-    // BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
-    // }
-
     public static void main(String[] args) throws IOException {
     }
 }

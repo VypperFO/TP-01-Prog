@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.*;
 import java.util.Arrays;
 
+import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -186,12 +187,27 @@ public class View extends JFrame {
         return tabNoms;
     }
 
+    public static void sauvegarde(String fileName, int[][] tab) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
+
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[0].length; j++) {
+                writer.write(tab[i][j] + " ");
+            }
+            writer.newLine();
+        }
+        writer.close();
+    }
+
     // Section Listener
 
     public void btnAjoutAction() {
     }
 
     public void btnModifAction() {
+        int ligneSelectionner = tabNotes.getSelectedRow();
+
+        
     }
 
     public void btnSupAction() {
@@ -212,10 +228,17 @@ public class View extends JFrame {
         int reponse = JOptionPane.showConfirmDialog(frame, "Voulez-vous sauvegarder?", "Quitter",
                 JOptionPane.YES_NO_CANCEL_OPTION);
 
-        if (reponse == JOptionPane.YES_OPTION)
+        if (reponse == JOptionPane.YES_OPTION) {
+            try {
+                sauvegarde("Classes/src/com/company/test.txt", Utils.convertT2D(modelNotes));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             System.exit(0);
-        else
+        }
+        else {
             System.exit(0);
+        }
     }
 
     public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
@@ -223,7 +246,7 @@ public class View extends JFrame {
         int j = 0;
 
         for (int i = 0; i < modelStats.getColumnCount(); i++) {
-            modelStats.setValueAt(Utils.moyenneEval(tableauEntiers, 1), 0, i);
+            //modelStats.setValueAt(Utils.moyenneEval(tableauEntiers, 1), 0, 0);
             j++;
         }
     }
