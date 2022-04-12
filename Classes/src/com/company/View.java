@@ -8,6 +8,8 @@ import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.table.*;
 
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Convert;
+
 public class View extends JFrame {
     JLabel labDA, labExam01, labExam02, labTP01, labTP02;
     JButton btnAjout, btnModif, btnSup, btnQuit;
@@ -19,14 +21,6 @@ public class View extends JFrame {
     Dimension dimBtn = new Dimension(125, 25);
     String[] colNames = { "DA", "Examen 1", "Examen 2", "TP 1", "TP 2", "Total %" };
     String[] rowNames = { "Moyenne", "Note minimum", "Note maximum", "Nombre d'eleves" };
-    int[][] data = {
-            { 1, 2, 3, 4, 5, 6 },
-            { 2, 3, 5, 1, 5, 6 },
-            { 24, 6, 2, 4, 5, 6 }
-    };
-
-    public static int nbNoms;
-    public static String[][] tabNoms;
 
     JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
     JFrame frame = new JFrame("2173242");
@@ -43,7 +37,8 @@ public class View extends JFrame {
         //
         // JTable
         //
-        modelNotes = new DefaultTableModel(colNames, 10) {
+        /** Tableau donnee */
+        modelNotes = new DefaultTableModel(readFileTab("Classes/src/com/company/donnees.txt"), colNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -55,23 +50,7 @@ public class View extends JFrame {
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
 
-        // Lis le fichier
-        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
-        tabNoms = new String[nbNoms][5];
-        readFileTab("Classes/src/com/company/donnees.txt");
-
-        // Ecrit tout les chiffres au bon endroits
-        for (int i = 0; i < modelNotes.getRowCount(); i++) {
-            for (int j = 0; j < modelNotes.getColumnCount(); j++) {
-                modelNotes.setValueAt(Integer.valueOf(tabNoms[i][j]), i, j);
-            }
-        }
-
-        // Remplace le Total %
-        for (int i = 0; i < modelNotes.getRowCount(); i++) {
-            modelNotes.setValueAt(0, i, 5);
-        }
-
+        /** Stats */
         modelStats = new DefaultTableModel(4, 6) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -84,6 +63,8 @@ public class View extends JFrame {
         for (int i = 0; i < rowNames.length; i++) {
             modelStats.setValueAt(rowNames[i], i, 0);
         }
+
+        ajouterStats(modelNotes, modelStats);
 
         //
         // Label et TextField
@@ -174,27 +155,30 @@ public class View extends JFrame {
         frame.setVisible(true);
     }
 
-    // Section méthodes maisons
-    public static int countLinesFile(String fileName) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        while (reader.readLine() != null)
-            nbNoms++;
-        return nbNoms;
-    }
+    public static String[][] tabNoms = new String[22][6];
+    public static int nbNoms;
 
     public static String[][] readFileTab(String fileName) throws IOException {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
             String[] tab;
-            int index = 0;
+            nbNoms = 0;
 
             while ((line = reader.readLine()) != null) {
                 tab = line.split(" ");
-                tabNoms[index] = tab;
-                index++;
+                tabNoms[nbNoms][0] = tab[0];
+                tabNoms[nbNoms][1] = tab[1];
+                tabNoms[nbNoms][2] = tab[2];
+                tabNoms[nbNoms][3] = tab[3];
+                tabNoms[nbNoms][4] = tab[4];
+                tabNoms[nbNoms][5] = String.valueOf((Integer.parseInt(tabNoms[nbNoms][1]) +
+                        (Integer.parseInt(tabNoms[nbNoms][2]) +
+                                (Integer.parseInt(tabNoms[nbNoms][3]) +
+                                        (Integer.parseInt(tabNoms[nbNoms][4])))))
+                        / 4);
+                nbNoms++;
             }
-
             reader.close();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
@@ -211,6 +195,17 @@ public class View extends JFrame {
     }
 
     public void btnSupAction() {
+        int ligneVide = tabNotes.getRowCount();
+        int ligneSelectionner = tabNotes.getSelectedRow();
+
+        try {
+            if (ligneVide == 0)
+                JOptionPane.showMessageDialog(frame, "La ligne selectionner est vide", "Erreur", JOptionPane.OK_OPTION);
+            else
+                modelNotes.removeRow(ligneSelectionner);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "UNE ERREUR EST SURVENUE", "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void btnQuitAction() {
@@ -223,14 +218,17 @@ public class View extends JFrame {
             System.exit(0);
     }
 
+    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+        int[][] tableauEntiers = Utils.convertT2D(modelNotes);
+        int j = 0;
+
+        for (int i = 0; i < modelStats.getColumnCount(); i++) {
+            modelStats.setValueAt(Utils.moyenneEval(tableauEntiers, 1), 0, i);
+            j++;
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         View v = new View();
-
-        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
-        tabNoms = new String[nbNoms][5];
-        readFileTab("Classes/src/com/company/donnees.txt");
-        for (int i = 0; i < nbNoms; i++) {
-            System.out.println(Arrays.toString(tabNoms[i]));
-        }
     }
 }

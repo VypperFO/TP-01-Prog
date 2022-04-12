@@ -171,20 +171,22 @@ public class Utils {
             return -1;
     }
 
-    // TODO Fix l'esti de probleme de casting de mes couilles
-    public static int[][] convertT2D(DefaultTableModel tableau) {
-        int tabRow = tableau.getRowCount();
-        int tabCol = tableau.getColumnCount();
+    /**
+     * Permet de convertir un model vers un tableau d'entiers
+     * 
+     * @param model Le model a convertir
+     * @return Retourne un tableau d'entiers
+     */
+    public static int[][] convertT2D(DefaultTableModel model) {
+        int tabRow = model.getRowCount();
+        int tabCol = model.getColumnCount();
         int[][] tableauEntiers = new int[tabRow][tabCol];
 
         for (int i = 0; i < tabRow; i++) {
             for (int j = 0; j < tabCol; j++) {
-                if (tableau.getValueAt(i, j).equals((int) tableau.getValueAt(i, j))) {
-                    tableauEntiers[i][j] = Integer.valueOf(String.valueOf(tableau.getValueAt(i, j)));
-                }
+                tableauEntiers[i][j] = Integer.valueOf(String.valueOf(model.getValueAt(i, j)));
             }
         }
-
         return tableauEntiers;
     }
 
@@ -195,28 +197,5 @@ public class Utils {
     // }
 
     public static void main(String[] args) throws IOException {
-        int[][] tab = {
-                { 1, 2, 3, 4 },
-                { 2, 6, 5, 4 },
-                { 4, 10, 4, 5 }
-        };
-
-        int[][] tab02 = null;
-
-        DefaultTableModel modelNotes;
-        JTable tabNotes;
-        Object[][] data = {
-                { 1, 2, 3, 4 },
-                { 2, 3, 5, 1 },
-                { 24, 6, 2, 4 }
-        };
-        modelNotes = new DefaultTableModel(data, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tabNotes = new JTable(modelNotes);
-        tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 }
