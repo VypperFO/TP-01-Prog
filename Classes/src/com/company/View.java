@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 
 import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Convert;
@@ -47,10 +49,25 @@ public class View extends JFrame {
         };
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
-
+        
+        tabNotes.setRowSelectionInterval(0, 0);
+        
+        tabNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+                if (e.getValueIsAdjusting() || tabNotes.getSelectedRow() > -1) {
+                    txfDA.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 0)));
+                    txfExam01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 1)));
+                    txfExam02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 2)));
+                    txfTP01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 3)));
+                    txfTP02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 4)));
+                }
+            }
+        });
+        
         /** Stats */
         modelStats = new DefaultTableModel(4, 6) {
             @Override
@@ -207,7 +224,11 @@ public class View extends JFrame {
     public void btnModifAction() {
         int ligneSelectionner = tabNotes.getSelectedRow();
 
-        
+        modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
+        modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
+        modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
+        modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
+        modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
     }
 
     public void btnSupAction() {
@@ -231,8 +252,8 @@ public class View extends JFrame {
         if (reponse == JOptionPane.YES_OPTION) {
             try {
                 sauvegarde("Classes/src/com/company/test.txt", Utils.convertT2D(modelNotes));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                System.out.println("Une erreur est survenue!");;
             }
             System.exit(0);
         }
