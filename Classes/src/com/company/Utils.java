@@ -1,19 +1,17 @@
+/**
+ * @author Félix-Olivier Latulippe
+ * @DA 2173242
+ * @session HV2022
+ * 
+ * Ce fichier contient les méthodes utilitaires 
+ */
+
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 import javax.swing.table.*;
-import java.awt.*;
-import javax.swing.*;
-
-import javax.sound.sampled.SourceDataLine;
 
 public class Utils {
     public static final DecimalFormat df = new DecimalFormat("0.00");

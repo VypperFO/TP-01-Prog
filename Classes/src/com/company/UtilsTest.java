@@ -1,13 +1,19 @@
+/**
+ * @author Félix-Olivier Latulippe
+ * @DA 2173242
+ * @session HV2022
+ * 
+ * Ce fichier contient les tests des méthodes utilitaires 
+ */
+
 package com.company;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.text.DecimalFormat;
 
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 public class UtilsTest {
     public static final DecimalFormat df = new DecimalFormat("0.00");

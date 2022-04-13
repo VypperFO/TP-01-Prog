@@ -1,3 +1,11 @@
+/**
+ * @author Félix-Olivier Latulippe
+ * @DA 2173242
+ * @session HV2022
+ * 
+ * Ce fichier contient le frame, les actions listener ainsi que les méthodes maisons 
+ */
+
 package com.company;
 
 import java.awt.*;
@@ -24,17 +32,17 @@ public class View extends JFrame {
     JFrame frame = new JFrame("2173242");
 
     public View() throws IOException {
-        //
-        // Frame
-        //
+        // @@@@@@@@@@@@@
+        // @@@ Frame @@@
+        // @@@@@@@@@@@@@
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setMinimumSize(new Dimension(1050, 350));
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
-        //
-        // JTable
-        //
+        // @@@@@@@@@@@@@@@@
+        // @@@ Tableaux @@@
+        // @@@@@@@@@@@@@@@@
         /** Tableau donnee */
 
         nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
@@ -82,9 +90,9 @@ public class View extends JFrame {
 
         ajouterStats(modelNotes, modelStats);
 
-        //
-        // Label et TextField
-        //
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@
+        // @@@ Label et TextField @@@
+        // @@@@@@@@@@@@@@@@@@@@@@@@@@
         labDA = new JLabel("DA");
         labExam01 = new JLabel("Examen 1");
         labExam02 = new JLabel("Examen 2");
@@ -106,9 +114,9 @@ public class View extends JFrame {
         txfTP02 = new JTextField("");
         txfTP02.setPreferredSize(dimTxf);
 
-        //
-        // Button
-        //
+        // @@@@@@@@@@@@@@
+        // @@@ Button @@@
+        // @@@@@@@@@@@@@@
         btnAjout = new JButton("Ajouter");
         btnAjout.setPreferredSize(dimBtn);
         btnAjout.addActionListener(e -> btnAjoutAction());
@@ -125,9 +133,9 @@ public class View extends JFrame {
         btnQuit.setPreferredSize(dimBtn);
         btnQuit.addActionListener(e -> btnQuitAction());
 
-        //
-        // Panel
-        //
+        // @@@@@@@@@@@@@
+        // @@@ Panel @@@
+        // @@@@@@@@@@@@@
         panBtnQuit = new JPanel();
         panBtnQuit.setLayout(new BorderLayout());
         panBtnQuit.add(btnQuit, BorderLayout.EAST);
@@ -162,14 +170,18 @@ public class View extends JFrame {
         panEst.add(panLabTxf, BorderLayout.NORTH);
         panEst.add(panBtn, BorderLayout.CENTER);
 
-        //
-        // Frame 2.0
-        //
+        // @@@@@@@@@@@@@
+        // @@@ Frame @@@
+        // @@@@@@@@@@@@@
         frame.add(panCenter, BorderLayout.WEST);
         frame.add(panEst, BorderLayout.EAST);
         frame.add(panBtnQuit, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
+
+    // @@@@@@@@@@@@@@@@@@@@@@@@
+    // @@@ Méthodes maisons @@@
+    // @@@@@@@@@@@@@@@@@@@@@@@@
 
     public static int nbNoms; // Nombre de noms
     public static String[][] tabNoms; // Tableau des noms
@@ -244,41 +256,6 @@ public class View extends JFrame {
     }
 
     /**
-     * Permet d'ajouter les statistiques du model de notes
-     * 
-     * @param modelNotes Le model de notes
-     * @param modelStats Le model de statistiques à modifier
-     */
-    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
-        int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
-
-        if (modelNotes.getRowCount() != 0) {
-            for (int i = 1; i < tabIntTemp[0].length; i++) {
-                modelStats.setValueAt(Utils.moyenneEval(tabIntTemp, i), 0, i);
-                modelStats.setValueAt(Utils.minEval(tabIntTemp, i), 1, i);
-                modelStats.setValueAt(Utils.maxEval(tabIntTemp, i), 2, i);
-            }
-            modelStats.setValueAt(modelNotes.getRowCount(), 3, 1);
-        } else {
-            for (int i = 1; i < modelStats.getColumnCount(); i++) {
-                modelStats.setValueAt("--", 0, i);
-                modelStats.setValueAt("--", 1, i);
-                modelStats.setValueAt("--", 2, i);
-            }
-        }
-    }
-
-    /**
-     * Permet de mettre à jour le model de notes et de statistiques
-     * 
-     * @param modelNotes Le model de notes
-     * @param modelStats Le model de statistiques
-     */
-    public static void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
-        ajouterStats(modelNotes, modelStats);
-    }
-
-    /**
      * Permet de supprimer la dernière colonne d'un tableau d'entiers
      * 
      * @param array Le tableau d'entiers
@@ -300,7 +277,45 @@ public class View extends JFrame {
         return newArray;
     }
 
-    // Section Listener
+    /**
+     * Permet d'ajouter les statistiques du model de notes
+     * 
+     * @param modelNotes Le model de notes
+     * @param modelStats Le model de statistiques à modifier
+     */
+    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+        int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
+
+        if (modelNotes.getRowCount() != 0) {
+            for (int i = 1; i < tabIntTemp[0].length; i++) {
+                modelStats.setValueAt(Utils.moyenneEval(tabIntTemp, i), 0, i);
+                modelStats.setValueAt(Utils.minEval(tabIntTemp, i), 1, i);
+                modelStats.setValueAt(Utils.maxEval(tabIntTemp, i), 2, i);
+            }
+            modelStats.setValueAt(modelNotes.getRowCount(), 3, 1);
+        } else {
+            for (int i = 1; i < modelStats.getColumnCount(); i++) {
+                modelStats.setValueAt("--", 0, i);
+                modelStats.setValueAt("--", 1, i);
+                modelStats.setValueAt("--", 2, i);
+            }
+            modelStats.setValueAt(0, 3, 1);
+        }
+    }
+
+    /**
+     * Permet de mettre à jour le model de notes et de statistiques
+     * 
+     * @param modelNotes Le model de notes
+     * @param modelStats Le model de statistiques
+     */
+    public static void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+        ajouterStats(modelNotes, modelStats);
+    }
+
+    // @@@@@@@@@@@@@@@@@@@@@@@@
+    // @@@ Section Listener @@@
+    // @@@@@@@@@@@@@@@@@@@@@@@@
 
     /**
      * Permet d'ajouter un élement au model de notes
