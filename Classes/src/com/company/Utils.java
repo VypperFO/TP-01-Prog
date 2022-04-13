@@ -171,6 +171,16 @@ public class Utils {
             return -1;
     }
 
+    public static boolean isPresentCol(int[][] tableau, int choixCol, int valeurRecherche) {
+        quicksort(tableau, choixCol);
+
+        if (fouilleDichoCol(tableau, valeurRecherche, choixCol) != -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Permet de convertir un model vers un tableau d'entiers
      * 
@@ -191,5 +201,12 @@ public class Utils {
     }
 
     public static void main(String[] args) throws IOException {
+
+        int[][] salope = {
+                { 1, 2, 3 },
+                { 12, 3, 532 }
+        };
+
+        System.out.println(isPresentCol(salope, 1, 1));
     }
 }

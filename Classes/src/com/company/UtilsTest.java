@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class UtilsTest {
     public static final DecimalFormat df = new DecimalFormat("0.00");
@@ -29,29 +30,49 @@ public class UtilsTest {
         assertEquals(expectedResult, actualResult);
     }
 
-    @ParameterizedTest(name="Plus grand élement de la colonne {0} est {1}")
+    @ParameterizedTest(name = "Plus grand élement de la colonne {0} est {1}")
     @CsvSource({
-        "0, 3",
-        "1, 4",
-        "2, 5"
+            "0, 3",
+            "1, 4",
+            "2, 5"
     })
-    public void maxEval(int col, int expectedResult){
+    public void maxEval(int col, int expectedResult) {
         int[][] array = tab;
 
         int actualResult = Utils.maxEval(array, col);
         assertEquals(expectedResult, actualResult);
     }
 
-    @ParameterizedTest(name="Plus petit élement de la colonne {0} est {1}")
+    @ParameterizedTest(name = "Plus petit élement de la colonne {0} est {1}")
     @CsvSource({
-        "0, 1",
-        "1, 2",
-        "2, 3"
+            "0, 1",
+            "1, 2",
+            "2, 3"
     })
-    public void minEval(int col, int expectedResult){
+    public void minEval(int col, int expectedResult) {
         int[][] array = tab;
 
         int actualResult = Utils.minEval(array, col);
         assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest(name = "{1} est présent dans la colonne {0}")
+    @CsvSource({
+            "0, 3",
+            "1, 4",
+            "2, 5"
+    })
+    void isPresentCol_True(int choixCol, int valeurRecherche) {
+        assertTrue(Utils.isPresentCol(tab, choixCol, valeurRecherche));
+    }
+
+    @ParameterizedTest(name = "{1} n'est pas présent dans la colonne {0}")
+    @CsvSource({
+            "0, 32",
+            "1, 43",
+            "2, 46"
+    })
+    void isPresentCol_False(int choixCol, int valeurRecherche) {
+        assertFalse(Utils.isPresentCol(tab, choixCol, valeurRecherche));
     }
 }

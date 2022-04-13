@@ -3,15 +3,10 @@ package com.company;
 import java.awt.*;
 import java.io.IOException;
 import java.io.*;
-import java.util.Arrays;
-
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
-
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Convert;
 
 public class View extends JFrame {
     JLabel labDA, labExam01, labExam02, labTP01, labTP02;
@@ -41,6 +36,9 @@ public class View extends JFrame {
         // JTable
         //
         /** Tableau donnee */
+
+        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
+        tabNoms = new String[nbNoms][6];
         modelNotes = new DefaultTableModel(readFileTab("Classes/src/com/company/donnees.txt"), colNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -49,15 +47,15 @@ public class View extends JFrame {
         };
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
-        
+
         tabNotes.setRowSelectionInterval(0, 0);
-        
+
         tabNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e){
+            public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() || tabNotes.getSelectedRow() > -1) {
                     txfDA.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 0)));
                     txfExam01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 1)));
@@ -67,7 +65,7 @@ public class View extends JFrame {
                 }
             }
         });
-        
+
         /** Stats */
         modelStats = new DefaultTableModel(4, 6) {
             @Override
@@ -173,14 +171,36 @@ public class View extends JFrame {
         frame.setVisible(true);
     }
 
-    public static String[][] tabNoms = new String[22][6];
-    public static int nbNoms;
+    public static int nbNoms; // Nombre de noms
+    public static String[][] tabNoms; // Tableau des noms
 
+    /**
+     * Permet de compter le nombre de noms dans un fichier
+     * 
+     * @param fileName Le fichier a compter
+     * @return Retourne le nombre de noms dans un fichier
+     * @throws IOException
+     */
+    public static int countLinesFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        while (reader.readLine() != null)
+            nbNoms++;
+        return nbNoms;
+    }
+
+    /**
+     * Permet de lire un tableau dans un fichier txt et de l'écrire dans un tableau
+     * 
+     * @param fileName Le fichier à lire
+     * @return Retourne un tableau de strings
+     * @throws IOException
+     */
     public static String[][] readFileTab(String fileName) throws IOException {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            String[] tab;
+
+            BufferedReader reader = new BufferedReader(new FileReader(fileName)); // Le reader
+            String line; // La line en cours
+            String[] tab; // Le vecteur en cours
             nbNoms = 0;
 
             while ((line = reader.readLine()) != null) {
@@ -204,8 +224,15 @@ public class View extends JFrame {
         return tabNoms;
     }
 
+    /**
+     * Permet de sauvegarder un tableau d'entiers dans un fichier txt
+     * 
+     * @param fileName Le fichier txt a enregistrer
+     * @param tab      Le tableau d'entiers
+     * @throws IOException
+     */
     public static void sauvegarde(String fileName, int[][] tab) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false)); // Le writer
 
         for (int i = 0; i < tab.length; i++) {
             for (int j = 0; j < tab[0].length; j++) {
@@ -216,59 +243,131 @@ public class View extends JFrame {
         writer.close();
     }
 
-    // Section Listener
+    /**
+     * Permet d'ajouter les statistiques du model de notes
+     * 
+     * @param modelNotes Le model de notes
+     * @param modelStats Le model de statistiques à modifier
+     */
+    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+        int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
 
-    public void btnAjoutAction() {
+        if (modelNotes.getRowCount() != 0) {
+            for (int i = 1; i < tabIntTemp[0].length; i++) {
+                modelStats.setValueAt(Utils.moyenneEval(tabIntTemp, i), 0, i);
+                modelStats.setValueAt(Utils.minEval(tabIntTemp, i), 1, i);
+                modelStats.setValueAt(Utils.maxEval(tabIntTemp, i), 2, i);
+            }
+            modelStats.setValueAt(modelNotes.getRowCount(), 3, 1);
+        } else {
+            for (int i = 1; i < modelStats.getColumnCount(); i++) {
+                modelStats.setValueAt("--", 0, i);
+                modelStats.setValueAt("--", 1, i);
+                modelStats.setValueAt("--", 2, i);
+            }
+        }
     }
 
+    /**
+     * Permet de mettre à jour le model de notes et de statistiques
+     * 
+     * @param modelNotes Le model de notes
+     * @param modelStats Le model de statistiques
+     */
+    public static void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+        ajouterStats(modelNotes, modelStats);
+    }
+
+    /**
+     * Permet de supprimer la dernière colonne d'un tableau d'entiers
+     * 
+     * @param array Le tableau d'entiers
+     * @return Retourne le tableau d'entiers sans la dernière colonne
+     */
+    public static int[][] supDerniereCol(int[][] array) {
+        int row = array.length; // Nombre de lignes du tableau
+        int col = array[0].length; // Nombres de colonnes du tableau
+
+        int[][] newArray = new int[row][col - 1]; // Nouveau tableau avec une colonne en moins
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0, currColumn = 0; j < col; j++) {
+                if (j != 5) {
+                    newArray[i][currColumn++] = array[i][j];
+                }
+            }
+        }
+        return newArray;
+    }
+
+    // Section Listener
+
+    /**
+     * Permet d'ajouter un élement au model de notes
+     */
+    public void btnAjoutAction() {
+
+        updateState(modelNotes, modelStats);
+    }
+
+    /**
+     * Permet de modifier une ligne sélectionnée
+     */
     public void btnModifAction() {
-        int ligneSelectionner = tabNotes.getSelectedRow();
+        int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
 
         modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
         modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
         modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
         modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
         modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
+
+        updateState(modelNotes, modelStats);
     }
 
+    /**
+     * Permet de supprimer une ligne sélectionnée
+     */
     public void btnSupAction() {
-        int ligneVide = tabNotes.getRowCount();
-        int ligneSelectionner = tabNotes.getSelectedRow();
+        int ligneVide = tabNotes.getRowCount(); // Nombre de lignes
+        int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
 
         try {
-            if (ligneVide == 0)
-                JOptionPane.showMessageDialog(frame, "La ligne selectionner est vide", "Erreur", JOptionPane.OK_OPTION);
-            else
+            if (ligneVide == 0) {
+                JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à effacer", "Erreur",
+                        JOptionPane.OK_OPTION);
+            } else {
                 modelNotes.removeRow(ligneSelectionner);
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "UNE ERREUR EST SURVENUE", "Erreur", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
+
+        txfDA.setText("");
+        txfExam01.setText("");
+        txfExam02.setText("");
+        txfTP01.setText("");
+        txfTP02.setText("");
+
+        updateState(modelNotes, modelStats);
     }
 
+    /**
+     * Permet de quitter l'application et de sauvegarder
+     */
     public void btnQuitAction() {
         int reponse = JOptionPane.showConfirmDialog(frame, "Voulez-vous sauvegarder?", "Quitter",
-                JOptionPane.YES_NO_CANCEL_OPTION);
+                JOptionPane.YES_NO_OPTION); // Réponse de l'utilisateur
 
         if (reponse == JOptionPane.YES_OPTION) {
             try {
-                sauvegarde("Classes/src/com/company/test.txt", Utils.convertT2D(modelNotes));
+                sauvegarde("Classes/src/com/company/donnees.txt", supDerniereCol(Utils.convertT2D(modelNotes)));
             } catch (Exception e) {
-                System.out.println("Une erreur est survenue!");;
+                System.out.println(e.getMessage());
             }
             System.exit(0);
-        }
-        else {
+        } else {
             System.exit(0);
-        }
-    }
-
-    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
-        int[][] tableauEntiers = Utils.convertT2D(modelNotes);
-        int j = 0;
-
-        for (int i = 0; i < modelStats.getColumnCount(); i++) {
-            //modelStats.setValueAt(Utils.moyenneEval(tableauEntiers, 1), 0, 0);
-            j++;
         }
     }
 
