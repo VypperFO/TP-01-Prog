@@ -16,7 +16,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 public class UtilsTest {
-    public static final DecimalFormat df = new DecimalFormat("0.00");
     int[][] tab = {
             { 1, 2, 3 },
             { 3, 4, 5 },
@@ -25,9 +24,9 @@ public class UtilsTest {
 
     @ParameterizedTest(name = "Moyenne colonne {0} est {1}")
     @CsvSource({
-            "0, 1.67",
-            "1, 2.67",
-            "2, 4.0"
+            "0, 1.6666666666666667",
+            "1, 2.6666666666666665",
+            "2, 4.00"
     })
     public void moyenneEval(int col, double expectedResult) {
         int[][] array = tab;

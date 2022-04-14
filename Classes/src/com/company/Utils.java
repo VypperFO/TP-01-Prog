@@ -9,13 +9,11 @@
 package com.company;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import javax.swing.table.*;
 
 public class Utils {
-    public static final DecimalFormat df = new DecimalFormat("0.00");
-
     /**
      * Permet de calculer la moyenne d'une colonne d'un tableau 2D
      * 
@@ -32,7 +30,6 @@ public class Utils {
         }
 
         moyenne = somme / array.length;
-        moyenne = Double.valueOf(df.format(moyenne));
 
         return moyenne;
     }
@@ -76,8 +73,8 @@ public class Utils {
      * @param valeurA Le premier entier
      * @param valeurB Le deuxième entier
      */
-    public static void permutation(int[][] tab, int valeurA, int valeurB) {
-        int[] valeurTemporaire = tab[valeurA]; // Valeur temporaire
+    public static void permutation(int[] tab, int valeurA, int valeurB) {
+        int valeurTemporaire = tab[valeurA]; // Valeur temporaire
         tab[valeurA] = tab[valeurB];
         tab[valeurB] = valeurTemporaire;
     }
@@ -92,15 +89,15 @@ public class Utils {
      * @param choixCol     Colonne choisit
      * @return Retourne l'élement à sa position finale
      */
-    public static int partition(int[][] tab, int valeurGauche, int valeurDroite, int choixCol) {
-        int pivot = tab[valeurDroite][choixCol]; // Entier pivot
+    public static int partition(int[][] tab, int[] tabInd,int valeurGauche, int valeurDroite, int choixCol) {
+        int pivot = tab[tabInd[valeurDroite]][choixCol]; // Entier pivot
         for (int i = valeurGauche; i < valeurDroite; i++) {
             if (tab[i][choixCol] < pivot) {
-                permutation(tab, valeurGauche, i);
+                permutation(tabInd,valeurGauche, i);
                 valeurGauche++;
             }
         }
-        permutation(tab, valeurGauche, valeurDroite);
+        permutation(tabInd, valeurGauche, valeurDroite);
 
         return valeurGauche;
     }
@@ -113,11 +110,11 @@ public class Utils {
      * @param droite   Entier pivot de droite
      * @param choixCol Colonne du tableau 2D choisit
      */
-    public static void quicksortRaw(int[][] tab, int gauche, int droite, int choixCol) {
+    public static void quicksortRaw(int[][] tab, int[] tabInd, int gauche, int droite, int choixCol) {
         if (gauche < droite) {
-            int index = partition(tab, gauche, droite, choixCol);
-            quicksortRaw(tab, gauche, index - 1, choixCol);
-            quicksortRaw(tab, index + 1, droite, choixCol);
+            int index = partition(tab, tabInd, gauche, droite, choixCol);
+            quicksortRaw(tab, tabInd, gauche, index - 1, choixCol);
+            quicksortRaw(tab, tabInd, index + 1, droite, choixCol);
         }
     }
 
@@ -127,13 +124,13 @@ public class Utils {
      * @param tab      Le tableau 2D choisit
      * @param choixCol Colonne du tableau 2D choisit
      */
-    public static void quicksort(int[][] tab, int choixCol) {
+    public static void quicksort(int[][] tab, int[] tabInd, int choixCol) {
         try {
-            quicksortRaw(tab, 0, tab.length - 1, choixCol);
+            quicksortRaw(tab, tabInd, 0, tab.length - 1, choixCol);
         } catch (NullPointerException e) {
             System.out.println("Votre tableau est vide");
         } catch (Exception e) {
-            System.out.println("Une erreur est survenue");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -169,8 +166,15 @@ public class Utils {
             return -1;
     }
 
+    /**
+     * Permet de savoir si une valeur est présente dans une colonne d'un tableau
+     * @param tableau Le tableau
+     * @param choixCol La colonne choisit
+     * @param valeurRecherche La valeur recherché
+     * @return Retourne vrai si la la valeur est présente et faux si elle n'est pas présente.
+     */
     public static boolean isPresentCol(int[][] tableau, int choixCol, int valeurRecherche) {
-        quicksort(tableau, choixCol);
+        //quicksort(tableau, choixCol);
 
         if (fouilleDichoCol(tableau, valeurRecherche, choixCol) != -1) {
             return true;
@@ -199,12 +203,36 @@ public class Utils {
     }
 
     public static void main(String[] args) throws IOException {
-
-        int[][] salope = {
-                { 1, 2, 3 },
-                { 12, 3, 532 }
+        int[][] tab = {
+            {1,2,3},
+            {4,5,6},
+            {2,4,5}
         };
 
-        System.out.println(isPresentCol(salope, 1, 1));
+        int[] tabCol01 = new int[tab.length];
+        int[] tabCol02 = new int[tab.length];
+        int[] tabCol03 = new int[tab.length];
+
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol01[i] = i;
+        }
+
+        quicksort(tab, tabCol01, 0);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol02[i] = i;
+        }
+
+        quicksort(tab, tabCol02, 1);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol03[i] = i;
+        }
+
+        quicksort(tab, tabCol03, 2);
+
+        for (int i = 0; i < tab.length; i++) {
+            System.out.println(tab[tabCol01[i]][0] + "\t" + tab[tabCol01[i]][2] + "\t" + tab[tabCol01[i]][2]);
+        }
     }
 }

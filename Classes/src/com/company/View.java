@@ -10,12 +10,12 @@ package com.company;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
-
 public class View extends JFrame {
     JLabel labDA, labExam01, labExam02, labTP01, labTP02;
     JButton btnAjout, btnModif, btnSup, btnQuit;
@@ -31,6 +31,8 @@ public class View extends JFrame {
     JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
     JFrame frame = new JFrame("2173242");
 
+    public static final DecimalFormat df = new DecimalFormat("0.00");
+
     public View() throws IOException {
         // @@@@@@@@@@@@@
         // @@@ Frame @@@
@@ -39,6 +41,7 @@ public class View extends JFrame {
         frame.setMinimumSize(new Dimension(1050, 350));
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
+
 
         // @@@@@@@@@@@@@@@@
         // @@@ Tableaux @@@
@@ -197,6 +200,7 @@ public class View extends JFrame {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         while (reader.readLine() != null)
             nbNoms++;
+        reader.close();
         return nbNoms;
     }
 
@@ -209,7 +213,6 @@ public class View extends JFrame {
      */
     public static String[][] readFileTab(String fileName) throws IOException {
         try {
-
             BufferedReader reader = new BufferedReader(new FileReader(fileName)); // Le reader
             String line; // La line en cours
             String[] tab; // Le vecteur en cours
@@ -285,22 +288,14 @@ public class View extends JFrame {
      */
     public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
         int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
+        int nbEleve = modelNotes.getRowCount(); // Nombre d'éleves
 
-        if (modelNotes.getRowCount() != 0) {
-            for (int i = 1; i < tabIntTemp[0].length; i++) {
-                modelStats.setValueAt(Utils.moyenneEval(tabIntTemp, i), 0, i);
-                modelStats.setValueAt(Utils.minEval(tabIntTemp, i), 1, i);
-                modelStats.setValueAt(Utils.maxEval(tabIntTemp, i), 2, i);
-            }
-            modelStats.setValueAt(modelNotes.getRowCount(), 3, 1);
-        } else {
-            for (int i = 1; i < modelStats.getColumnCount(); i++) {
-                modelStats.setValueAt("--", 0, i);
-                modelStats.setValueAt("--", 1, i);
-                modelStats.setValueAt("--", 2, i);
-            }
-            modelStats.setValueAt(0, 3, 1);
+        for (int i = 1; i < tabIntTemp[0].length; i++) {
+            modelStats.setValueAt(df.format(Utils.moyenneEval(tabIntTemp, i)), 0, i);
+            modelStats.setValueAt(Utils.minEval(tabIntTemp, i), 1, i);
+            modelStats.setValueAt(Utils.maxEval(tabIntTemp, i), 2, i);
         }
+        modelStats.setValueAt(nbEleve, 3, 1);
     }
 
     /**
@@ -309,8 +304,17 @@ public class View extends JFrame {
      * @param modelNotes Le model de notes
      * @param modelStats Le model de statistiques
      */
-    public static void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
-        ajouterStats(modelNotes, modelStats);
+    public void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+            if (modelNotes.getRowCount() != 0) {
+                ajouterStats(modelNotes, modelStats);
+            } else {
+                for (int i = 1; i < modelStats.getColumnCount(); i++) {
+                    modelStats.setValueAt("--", 0, i);
+                    modelStats.setValueAt("--", 1, i);
+                    modelStats.setValueAt("--", 2, i);
+                }
+                modelStats.setValueAt(0, 3, 1);
+            }
     }
 
     // @@@@@@@@@@@@@@@@@@@@@@@@
@@ -330,12 +334,24 @@ public class View extends JFrame {
      */
     public void btnModifAction() {
         int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
+        int nbLigne = tabNotes.getRowCount(); // Nombre de lignes
+        int dernièreLigne = 5; // Chiffre de la dernière ligne
 
-        modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
-        modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
-        modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
-        modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
-        modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
+            if (nbLigne == 0) {
+                JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à modifier", "Erreur",
+                        JOptionPane.OK_OPTION);
+            } else {
+                modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
+                modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
+                modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
+                modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
+                modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
+                String total = String.valueOf((Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 1))
+                        + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 2))
+                        + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 3))
+                        + Integer.parseInt((String)modelNotes.getValueAt(ligneSelectionner, 4))) / 4);
+                modelNotes.setValueAt(total, ligneSelectionner, dernièreLigne);
+            }
 
         updateState(modelNotes, modelStats);
     }
