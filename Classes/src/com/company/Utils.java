@@ -9,8 +9,6 @@
 package com.company;
 
 import java.io.IOException;
-import java.util.Arrays;
-
 import javax.swing.table.*;
 
 public class Utils {

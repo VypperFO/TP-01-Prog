@@ -11,7 +11,6 @@ package com.company;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Vector;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -59,12 +58,13 @@ public class View extends JFrame {
         };
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabNotes.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
 
+        
         tabNotes.setRowSelectionInterval(0, 0);
-
         tabNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -77,6 +77,7 @@ public class View extends JFrame {
                 }
             }
         });
+        
 
         /** Stats */
         modelStats = new DefaultTableModel(4, 6) {
@@ -92,7 +93,7 @@ public class View extends JFrame {
             modelStats.setValueAt(rowNames[i], i, 0);
         }
 
-        ajouterStats(modelNotes, modelStats);
+        ajouterStats();
 
         // @@@@@@@@@@@@@@@@@@@@@@@@@@
         // @@@ Label et TextField @@@
@@ -249,14 +250,19 @@ public class View extends JFrame {
      */
     public static void sauvegarde(String fileName, int[][] tab) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false)); // Le writer
-
-        for (int i = 0; i < tab.length; i++) {
-            for (int j = 0; j < tab[0].length; j++) {
-                writer.write(tab[i][j] + " ");
+        
+        if (tab.length != 0) {
+            for (int i = 0; i < tab.length; i++) {
+                for (int j = 0; j < tab[0].length; j++) {
+                    writer.write(tab[i][j] + " ");
+                }
+                writer.newLine();
             }
-            writer.newLine();
+            writer.close();
+        } else {
+            writer.write(" ");
+            writer.close();
         }
-        writer.close();
     }
 
     /**
@@ -287,7 +293,7 @@ public class View extends JFrame {
      * @param modelNotes Le model de notes
      * @param modelStats Le model de statistiques à modifier
      */
-    public static void ajouterStats(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+    public void ajouterStats() {
         int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
         int nbEleve = modelNotes.getRowCount(); // Nombre d'éleves
 
@@ -307,7 +313,7 @@ public class View extends JFrame {
      */
     public void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
         if (modelNotes.getRowCount() != 0) {
-            ajouterStats(modelNotes, modelStats);
+            ajouterStats();
         } else {
             for (int i = 1; i < modelStats.getColumnCount(); i++) {
                 modelStats.setValueAt("--", 0, i);
@@ -373,21 +379,15 @@ public class View extends JFrame {
      * Permet de modifier une ligne sélectionnée
      */
     public void btnModifAction() {
-        int nbLigne = tabNotes.getRowCount(); // Nombre de lignes
         int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
 
         try {
-            if (nbLigne == 0) {
-                JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à modifier", "Erreur",
-                        JOptionPane.OK_OPTION);
-            } else {
-                addValuesTable(ligneSelectionner);
-            }
+            addValuesTable(ligneSelectionner);
 
-        updateState(modelNotes, modelStats);
+            updateState(modelNotes, modelStats);
         } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
-                        JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
+                JOptionPane.OK_OPTION);
         }
     }
 
@@ -395,16 +395,10 @@ public class View extends JFrame {
      * Permet de supprimer une ligne sélectionnée
      */
     public void btnSupAction() {
-        int ligneVide = tabNotes.getRowCount(); // Nombre de lignes
         int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
 
         try {
-            if (ligneVide == 0) {
-                JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à effacer", "Erreur",
-                        JOptionPane.OK_OPTION);
-            } else {
-                modelNotes.removeRow(ligneSelectionner);
-            }
+            modelNotes.removeRow(ligneSelectionner);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
@@ -429,7 +423,8 @@ public class View extends JFrame {
             try {
                 sauvegarde("Classes/src/com/company/donnees.txt", supDerniereCol(Utils.convertT2D(modelNotes)));
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                JOptionPane.showMessageDialog(frame, "Aucune données à sauvegarder", "Erreur",
+                JOptionPane.OK_OPTION);
             }
             System.exit(0);
         } else {
