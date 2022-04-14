@@ -59,12 +59,11 @@ public class View extends JFrame {
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabNotes.getTableHeader().setReorderingAllowed(false);
+        tabNotes.setRowSelectionInterval(0, 0);
 
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
-
         
-        tabNotes.setRowSelectionInterval(0, 0);
         tabNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -326,16 +325,22 @@ public class View extends JFrame {
     
     public void addValuesTable(int ligneSelectionner) {
         int dernièreColonne = 5; // Chiffre de la dernière ligne
-
+        int somme = 0; // Somme de tout les colonne d'une ligne
+        String total; // Le total en pourcentage
+        
         modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
         modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
         modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
         modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
         modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
-        String total = String.valueOf((Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 1))
-                + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 2))
-                + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 3))
-                + Integer.parseInt((String)modelNotes.getValueAt(ligneSelectionner, 4))) / 4);
+
+        for (int i = 1; i < 5; i++) {
+            somme += Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, i));
+        }
+
+        somme /= 4;
+        total = String.valueOf(somme);
+
         modelNotes.setValueAt(total, ligneSelectionner, dernièreColonne);
     }
 
