@@ -11,6 +11,7 @@ package com.company;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Vector;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -305,16 +306,31 @@ public class View extends JFrame {
      * @param modelStats Le model de statistiques
      */
     public void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
-            if (modelNotes.getRowCount() != 0) {
-                ajouterStats(modelNotes, modelStats);
-            } else {
-                for (int i = 1; i < modelStats.getColumnCount(); i++) {
-                    modelStats.setValueAt("--", 0, i);
-                    modelStats.setValueAt("--", 1, i);
-                    modelStats.setValueAt("--", 2, i);
-                }
-                modelStats.setValueAt(0, 3, 1);
+        if (modelNotes.getRowCount() != 0) {
+            ajouterStats(modelNotes, modelStats);
+        } else {
+            for (int i = 1; i < modelStats.getColumnCount(); i++) {
+                modelStats.setValueAt("--", 0, i);
+                modelStats.setValueAt("--", 1, i);
+                modelStats.setValueAt("--", 2, i);
             }
+            modelStats.setValueAt(0, 3, 1);
+        }
+    }
+    
+    public void addValuesTable(int ligneSelectionner) {
+        int dernièreColonne = 5; // Chiffre de la dernière ligne
+
+        modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
+        modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
+        modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
+        modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
+        modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
+        String total = String.valueOf((Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 1))
+                + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 2))
+                + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 3))
+                + Integer.parseInt((String)modelNotes.getValueAt(ligneSelectionner, 4))) / 4);
+        modelNotes.setValueAt(total, ligneSelectionner, dernièreColonne);
     }
 
     // @@@@@@@@@@@@@@@@@@@@@@@@
@@ -325,35 +341,54 @@ public class View extends JFrame {
      * Permet d'ajouter un élement au model de notes
      */
     public void btnAjoutAction() {
-
-        updateState(modelNotes, modelStats);
+        try {
+            int[][] tabTemporaire = Utils.convertT2D(modelNotes);
+            int[] tabIndexDA = new int[tabTemporaire.length];
+            int daChoisit = Integer.parseInt(txfDA.getText());
+            int dernièreLigne = modelNotes.getRowCount();
+            int colonneDA = 0;
+    
+            for (int i = 0; i < tabTemporaire.length; i++) {
+                tabIndexDA[i] = i;
+            }
+    
+            Utils.quicksort(tabTemporaire, tabIndexDA, colonneDA);
+            
+            if (!Utils.isPresentCol(tabTemporaire, tabIndexDA, colonneDA, daChoisit)) {
+                modelNotes.addRow(new Object[] { "0", "0", "0", "0", "0", "0"});
+                addValuesTable(dernièreLigne);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Ce DA est déjà présent", "Erreur",
+                        JOptionPane.OK_OPTION);
+            }
+            
+            updateState(modelNotes, modelStats);
+        } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
+                        JOptionPane.OK_OPTION);
+        }
     }
 
     /**
      * Permet de modifier une ligne sélectionnée
      */
     public void btnModifAction() {
-        int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
         int nbLigne = tabNotes.getRowCount(); // Nombre de lignes
-        int dernièreLigne = 5; // Chiffre de la dernière ligne
+        int ligneSelectionner = tabNotes.getSelectedRow(); // La ligne sélectionnée
 
+        try {
             if (nbLigne == 0) {
                 JOptionPane.showMessageDialog(frame, "Il n'y a plus de données à modifier", "Erreur",
                         JOptionPane.OK_OPTION);
             } else {
-                modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
-                modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
-                modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
-                modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
-                modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
-                String total = String.valueOf((Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 1))
-                        + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 2))
-                        + Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, 3))
-                        + Integer.parseInt((String)modelNotes.getValueAt(ligneSelectionner, 4))) / 4);
-                modelNotes.setValueAt(total, ligneSelectionner, dernièreLigne);
+                addValuesTable(ligneSelectionner);
             }
 
         updateState(modelNotes, modelStats);
+        } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
+                        JOptionPane.OK_OPTION);
+        }
     }
 
     /**

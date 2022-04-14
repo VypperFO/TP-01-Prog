@@ -60,7 +60,7 @@ public class UtilsTest {
         assertEquals(expectedResult, actualResult);
     }
 
-    /*@ParameterizedTest(name = "{1} est présent dans la colonne {0}")
+    @ParameterizedTest(name = "{1} est présent dans la colonne {0}")
     @CsvSource({
             "0, 3",
             "1, 4",
@@ -122,5 +122,5 @@ public class UtilsTest {
         Utils.quicksort(tab, tabCol03, 2);
 
         assertFalse(Utils.isPresentCol(tab, tabCol01, choixCol, valeurRecherche));
-    }*/
+    }
 }
