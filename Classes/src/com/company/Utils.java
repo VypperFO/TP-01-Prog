@@ -143,7 +143,7 @@ public class Utils {
      * @param colonne         La colonne à rechercher
      * @return Retourne l'index si trouvé et -1 si il ne trouve rien
      */
-    public static int fouilleDichoCol(int[][] tableau, int valeurRecherche, int colonne) {
+    public static int fouilleDichoCol(int[][] tableau,  int[] tabInd, int valeurRecherche, int colonne) {
         int debut = 0; // Valeur du debut
         int fin = tableau.length - 1; // Valeur de fin
         int milieu = 0; // Valeur du millieu
@@ -152,9 +152,9 @@ public class Utils {
         while (debut <= fin && !trouve) {
             milieu = (debut + fin) / 2;
 
-            if (valeurRecherche == tableau[milieu][colonne])
+            if (valeurRecherche == tableau[tabInd[milieu]][colonne])
                 trouve = true;
-            else if (valeurRecherche < tableau[milieu][colonne])
+            else if (valeurRecherche < tableau[tabInd[milieu]][colonne])
                 fin = milieu - 1;
             else
                 debut = milieu + 1;
@@ -173,14 +173,13 @@ public class Utils {
      * @param valeurRecherche La valeur recherché
      * @return Retourne vrai si la la valeur est présente et faux si elle n'est pas présente.
      */
-    public static boolean isPresentCol(int[][] tableau, int choixCol, int valeurRecherche) {
-        //quicksort(tableau, choixCol);
+    public static boolean isPresentCol(int[][] tableau, int[] tabInd, int choixCol, int valeurRecherche) {
+        quicksort(tableau, tabInd, choixCol);
 
-        if (fouilleDichoCol(tableau, valeurRecherche, choixCol) != -1) {
+        if (fouilleDichoCol(tableau, tabInd, valeurRecherche, choixCol) != -1)
             return true;
-        } else {
+        else
             return false;
-        }
     }
 
     /**
@@ -205,8 +204,8 @@ public class Utils {
     public static void main(String[] args) throws IOException {
         int[][] tab = {
             {1,2,3},
-            {4,5,6},
-            {2,4,5}
+            {2,4,6},
+            {4,5,5}
         };
 
         int[] tabCol01 = new int[tab.length];
@@ -234,5 +233,7 @@ public class Utils {
         for (int i = 0; i < tab.length; i++) {
             System.out.println(tab[tabCol01[i]][0] + "\t" + tab[tabCol01[i]][2] + "\t" + tab[tabCol01[i]][2]);
         }
+
+        System.out.println(isPresentCol(tab, tabCol01, 2, 64));
     }
 }

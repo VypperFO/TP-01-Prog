@@ -10,7 +10,6 @@ package com.company;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.text.DecimalFormat;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -41,7 +40,7 @@ public class UtilsTest {
             "1, 4",
             "2, 5"
     })
-    public void maxEval(int col, int expectedResult) {
+    void maxEval(int col, int expectedResult) {
         int[][] array = tab;
 
         int actualResult = Utils.maxEval(array, col);
@@ -54,21 +53,43 @@ public class UtilsTest {
             "1, 2",
             "2, 3"
     })
-    public void minEval(int col, int expectedResult) {
+    void minEval(int col, int expectedResult) {
         int[][] array = tab;
 
         int actualResult = Utils.minEval(array, col);
         assertEquals(expectedResult, actualResult);
     }
 
-    @ParameterizedTest(name = "{1} est présent dans la colonne {0}")
+    /*@ParameterizedTest(name = "{1} est présent dans la colonne {0}")
     @CsvSource({
             "0, 3",
             "1, 4",
             "2, 5"
     })
     void isPresentCol_True(int choixCol, int valeurRecherche) {
-        assertTrue(Utils.isPresentCol(tab, choixCol, valeurRecherche));
+        int[] tabCol01 = new int[tab.length];
+        int[] tabCol02 = new int[tab.length];
+        int[] tabCol03 = new int[tab.length];
+
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol01[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol01, 0);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol02[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol02, 1);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol03[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol03, 2);
+
+        assertTrue(Utils.isPresentCol(tab, tabCol01, choixCol, valeurRecherche));
     }
 
     @ParameterizedTest(name = "{1} n'est pas présent dans la colonne {0}")
@@ -78,6 +99,28 @@ public class UtilsTest {
             "2, 46"
     })
     void isPresentCol_False(int choixCol, int valeurRecherche) {
-        assertFalse(Utils.isPresentCol(tab, choixCol, valeurRecherche));
-    }
+                int[] tabCol01 = new int[tab.length];
+        int[] tabCol02 = new int[tab.length];
+        int[] tabCol03 = new int[tab.length];
+
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol01[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol01, 0);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol02[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol02, 1);
+        
+        for (int i = 0; i < tabCol01.length; i++) {
+            tabCol03[i] = i;
+        }
+
+        Utils.quicksort(tab, tabCol03, 2);
+
+        assertFalse(Utils.isPresentCol(tab, tabCol01, choixCol, valeurRecherche));
+    }*/
 }
