@@ -59,7 +59,13 @@ public class View extends JFrame {
         tabNotes = new JTable(modelNotes);
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabNotes.getTableHeader().setReorderingAllowed(false);
+
         tabNotes.setRowSelectionInterval(0, 0);
+        txfDA.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 0)));
+        txfExam01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 1)));
+        txfExam02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 2)));
+        txfTP01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 3)));
+        txfTP02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 4)));
 
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
