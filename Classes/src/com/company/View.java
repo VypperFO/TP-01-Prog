@@ -29,7 +29,7 @@ public class View extends JFrame {
     String[] rowNames = { "Moyenne", "Note minimum", "Note maximum", "Nombre d'eleves" };
 
     JPanel panCenter, panEst, panLabTxf, panBtn, panBtnQuit;
-    JFrame frame = new JFrame("2173242");
+    JFrame frame = new JFrame("Felix-Olivier Latulippe; 2173242");
 
     public static final DecimalFormat df = new DecimalFormat("0.00");
 
@@ -48,9 +48,9 @@ public class View extends JFrame {
         // @@@@@@@@@@@@@@@@
         /** Tableau donnee */
 
-        nbNoms = countLinesFile("Classes/src/com/company/donnees.txt");
+        nbNoms = countLinesFile("Classes/src/com/company/notes.txt");
         tabNoms = new String[nbNoms][6];
-        modelNotes = new DefaultTableModel(readFileTab("Classes/src/com/company/donnees.txt"), colNames) {
+        modelNotes = new DefaultTableModel(readFileTab("Classes/src/com/company/notes.txt"), colNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -60,16 +60,11 @@ public class View extends JFrame {
         tabNotes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabNotes.getTableHeader().setReorderingAllowed(false);
 
-        tabNotes.setRowSelectionInterval(0, 0);
-        txfDA.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 0)));
-        txfExam01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 1)));
-        txfExam02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 2)));
-        txfTP01.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 3)));
-        txfTP02.setText(String.valueOf(modelNotes.getValueAt(tabNotes.getSelectedRow(), 4)));
 
         JScrollPane scroll = new JScrollPane(tabNotes);
         scroll.setPreferredSize(new Dimension(300, 200));
-        
+        tabNotes.setRowSelectionInterval(0, 0);
+
         tabNotes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -82,7 +77,6 @@ public class View extends JFrame {
                 }
             }
         });
-        
 
         /** Stats */
         modelStats = new DefaultTableModel(4, 6) {
@@ -204,7 +198,7 @@ public class View extends JFrame {
      * @throws IOException
      */
     public static int countLinesFile(String fileName) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        BufferedReader reader = new BufferedReader(new FileReader(fileName)); // Le reader
         while (reader.readLine() != null)
             nbNoms++;
         reader.close();
@@ -294,9 +288,6 @@ public class View extends JFrame {
 
     /**
      * Permet d'ajouter les statistiques du model de notes
-     * 
-     * @param modelNotes Le model de notes
-     * @param modelStats Le model de statistiques à modifier
      */
     public void ajouterStats() {
         int[][] tabIntTemp = Utils.convertT2D(modelNotes); // Tableau d'entiers temporaire
@@ -328,26 +319,49 @@ public class View extends JFrame {
             modelStats.setValueAt(0, 3, 1);
         }
     }
-    
+
+    public boolean isValueCorrect() {
+        boolean isCorrect = false;
+
+        try {
+            int txtExam01 = Integer.parseInt(txfExam01.getText());
+            int txtExam02 = Integer.parseInt(txfExam02.getText());
+            int txtTP01 = Integer.parseInt(txfTP01.getText());
+            int txtTP02 = Integer.parseInt(txfTP02.getText());
+
+            if ((txtExam01 <= 100) && (txtExam02 <= 100) && (txtTP01 <= 100) && (txtTP02 <= 100))
+                isCorrect = true;
+            else
+                isCorrect = false;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "Entrer une bonne valeur", "Erreur",
+                    JOptionPane.OK_OPTION);
+        }
+
+        return isCorrect;
+    }
+
     public void addValuesTable(int ligneSelectionner) {
         int dernièreColonne = 5; // Chiffre de la dernière ligne
         int somme = 0; // Somme de tout les colonne d'une ligne
         String total; // Le total en pourcentage
         
-        modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
-        modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
-        modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
-        modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
-        modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
+        if (isValueCorrect()) {
+            modelNotes.setValueAt(txfDA.getText(), ligneSelectionner, 0);
+            modelNotes.setValueAt(txfExam01.getText(), ligneSelectionner, 1);
+            modelNotes.setValueAt(txfExam02.getText(), ligneSelectionner, 2);
+            modelNotes.setValueAt(txfTP01.getText(), ligneSelectionner, 3);
+            modelNotes.setValueAt(txfTP02.getText(), ligneSelectionner, 4);
 
-        for (int i = 1; i < 5; i++) {
-            somme += Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, i));
+            for (int i = 1; i < 5; i++) {
+                somme += Integer.parseInt((String) modelNotes.getValueAt(ligneSelectionner, i));
+            }
+
+            somme /= 4;
+            total = String.valueOf(somme);
+
+            modelNotes.setValueAt(total, ligneSelectionner, dernièreColonne);
         }
-
-        somme /= 4;
-        total = String.valueOf(somme);
-
-        modelNotes.setValueAt(total, ligneSelectionner, dernièreColonne);
     }
 
     // @@@@@@@@@@@@@@@@@@@@@@@@
@@ -371,7 +385,7 @@ public class View extends JFrame {
     
             Utils.quicksort(tabTemporaire, tabIndexDA, colonneDA);
             
-            if (!Utils.isPresentCol(tabTemporaire, tabIndexDA, colonneDA, daChoisit)) {
+            if (!Utils.isPresentCol(tabTemporaire, tabIndexDA, colonneDA, daChoisit) && isValueCorrect()) {
                 modelNotes.addRow(new Object[] { "0", "0", "0", "0", "0", "0"});
                 addValuesTable(dernièreLigne);
             } else {
