@@ -65,9 +65,9 @@ public class Utils {
     }
 
     /**
-     * Permet de faire une permutation entre deux élements dans un tableau 2D
+     * Permet de faire une permutation entre deux élements dans un tableau
      * 
-     * @param tab     Le tableau 2D choisit
+     * @param tab     Le tableau choisit
      * @param valeurA Le premier entier
      * @param valeurB Le deuxième entier
      */
@@ -79,9 +79,10 @@ public class Utils {
 
     /**
      * Permet de positionner un élement dans sa colonne à sa position finale dans un
-     * tableau 2D
+     * tableau 2D avec un tableau d'indirection
      * 
      * @param tab          Le tableau 2D choisit
+     * @param tabInd       Le tableau d'indirection
      * @param valeurGauche Entier comparer à gauche
      * @param valeurDroite Entier comparer à droite
      * @param choixCol     Colonne choisit
@@ -101,9 +102,11 @@ public class Utils {
     }
 
     /**
-     * Permet de faire un quicksort d'une colonne dans un tableau 2D
+     * Permet de faire un quicksort d'une colonne dans un tableau 2D avec un tableau
+     * d'indirection
      * 
      * @param tab      Le tableau 2D choisit
+     * @param tabInd   Le tableau d'indirection
      * @param gauche   Entier de comparaison de gauche
      * @param droite   Entier pivot de droite
      * @param choixCol Colonne du tableau 2D choisit
@@ -120,6 +123,7 @@ public class Utils {
      * Permet de simplifier et organiser l'écriture de la méthode quicksortRaw
      * 
      * @param tab      Le tableau 2D choisit
+     * @param tabInd   Le tableau d'indirection
      * @param choixCol Colonne du tableau 2D choisit
      */
     public static void quicksort(int[][] tab, int[] tabInd, int choixCol) {
@@ -137,6 +141,7 @@ public class Utils {
      * tableau 2D
      * 
      * @param tableau         Le tableau 2D
+     * @param tabInd          Le tableau d'indirection
      * @param valeurRecherche La valeur rechercher
      * @param colonne         La colonne à rechercher
      * @return Retourne l'index si trouvé et -1 si il ne trouve rien
@@ -166,10 +171,13 @@ public class Utils {
 
     /**
      * Permet de savoir si une valeur est présente dans une colonne d'un tableau
-     * @param tableau Le tableau
-     * @param choixCol La colonne choisit
+     * 
+     * @param tableau         Le tableau
+     * @param tabInd          Le tableau d'indirection
+     * @param choixCol        La colonne choisit
      * @param valeurRecherche La valeur recherché
-     * @return Retourne vrai si la la valeur est présente et faux si elle n'est pas présente.
+     * @return Retourne vrai si la la valeur est présente et faux si elle n'est pas
+     *         présente.
      */
     public static boolean isPresentCol(int[][] tableau, int[] tabInd, int choixCol, int valeurRecherche) {
         quicksort(tableau, tabInd, choixCol);
@@ -187,9 +195,9 @@ public class Utils {
      * @return Retourne un tableau d'entiers
      */
     public static int[][] convertT2D(DefaultTableModel model) {
-        int tabRow = model.getRowCount();
-        int tabCol = model.getColumnCount();
-        int[][] tableauEntiers = new int[tabRow][tabCol];
+        int tabRow = model.getRowCount(); // La ligne
+        int tabCol = model.getColumnCount(); // La colonne
+        int[][] tableauEntiers = new int[tabRow][tabCol]; // Un nouveau tableau d'entiers
 
         for (int i = 0; i < tabRow; i++) {
             for (int j = 0; j < tabCol; j++) {
@@ -197,41 +205,5 @@ public class Utils {
             }
         }
         return tableauEntiers;
-    }
-
-    public static void main(String[] args) throws IOException {
-        int[][] tab = {
-            {1,2,3},
-            {2,4,6},
-            {4,5,5}
-        };
-
-        int[] tabCol01 = new int[tab.length];
-        int[] tabCol02 = new int[tab.length];
-        int[] tabCol03 = new int[tab.length];
-
-        for (int i = 0; i < tabCol01.length; i++) {
-            tabCol01[i] = i;
-        }
-
-        quicksort(tab, tabCol01, 0);
-        
-        for (int i = 0; i < tabCol01.length; i++) {
-            tabCol02[i] = i;
-        }
-
-        quicksort(tab, tabCol02, 1);
-        
-        for (int i = 0; i < tabCol01.length; i++) {
-            tabCol03[i] = i;
-        }
-
-        quicksort(tab, tabCol03, 2);
-
-        for (int i = 0; i < tab.length; i++) {
-            System.out.println(tab[tabCol01[i]][0] + "\t" + tab[tabCol01[i]][2] + "\t" + tab[tabCol01[i]][2]);
-        }
-
-        System.out.println(isPresentCol(tab, tabCol01, 2, 64));
     }
 }

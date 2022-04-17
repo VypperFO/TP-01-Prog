@@ -19,7 +19,7 @@ public class UtilsTest {
             { 1, 2, 3 },
             { 3, 4, 5 },
             { 1, 2, 4 }
-    };
+    }; // Un tableau d'entiers de test
 
     @ParameterizedTest(name = "Moyenne colonne {0} est {1}")
     @CsvSource({
@@ -28,9 +28,7 @@ public class UtilsTest {
             "2, 4.00"
     })
     public void moyenneEval(int col, double expectedResult) {
-        int[][] array = tab;
-
-        double actualResult = Utils.moyenneEval(array, col);
+        double actualResult = Utils.moyenneEval(tab, col);
         assertEquals(expectedResult, actualResult);
     }
 
@@ -41,9 +39,7 @@ public class UtilsTest {
             "2, 5"
     })
     void maxEval(int col, int expectedResult) {
-        int[][] array = tab;
-
-        int actualResult = Utils.maxEval(array, col);
+        int actualResult = Utils.maxEval(tab, col);
         assertEquals(expectedResult, actualResult);
     }
 
@@ -54,9 +50,7 @@ public class UtilsTest {
             "2, 3"
     })
     void minEval(int col, int expectedResult) {
-        int[][] array = tab;
-
-        int actualResult = Utils.minEval(array, col);
+        int actualResult = Utils.minEval(tab, col);
         assertEquals(expectedResult, actualResult);
     }
 
@@ -67,9 +61,9 @@ public class UtilsTest {
             "2, 5"
     })
     void isPresentCol_True(int choixCol, int valeurRecherche) {
-        int[] tabCol01 = new int[tab.length];
-        int[] tabCol02 = new int[tab.length];
-        int[] tabCol03 = new int[tab.length];
+        int[] tabCol01 = new int[tab.length]; // Vecteur de première colonne
+        int[] tabCol02 = new int[tab.length]; // Vecteur de deuxième colonne
+        int[] tabCol03 = new int[tab.length]; // Vecteur de troisième colonne
 
         for (int i = 0; i < tabCol01.length; i++) {
             tabCol01[i] = i;
@@ -99,9 +93,9 @@ public class UtilsTest {
             "2, 46"
     })
     void isPresentCol_False(int choixCol, int valeurRecherche) {
-                int[] tabCol01 = new int[tab.length];
-        int[] tabCol02 = new int[tab.length];
-        int[] tabCol03 = new int[tab.length];
+        int[] tabCol01 = new int[tab.length]; // Vecteur de première colonne
+        int[] tabCol02 = new int[tab.length]; // Vecteur de deuxième colonne
+        int[] tabCol03 = new int[tab.length]; // Vecteur de troisième colonne
 
         for (int i = 0; i < tabCol01.length; i++) {
             tabCol01[i] = i;

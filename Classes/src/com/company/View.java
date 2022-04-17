@@ -303,11 +303,8 @@ public class View extends JFrame {
 
     /**
      * Permet de mettre à jour le model de notes et de statistiques
-     * 
-     * @param modelNotes Le model de notes
-     * @param modelStats Le model de statistiques
      */
-    public void updateState(DefaultTableModel modelNotes, DefaultTableModel modelStats) {
+    public void updateState() {
         if (modelNotes.getRowCount() != 0) {
             ajouterStats();
         } else {
@@ -320,14 +317,20 @@ public class View extends JFrame {
         }
     }
 
+    /**
+     * Permet de vérifier si les valeurs entrer en txf sont correcte.
+     * Les valeurs ne doivent pas être en haut de 100 ni une chaine de charactères.
+     * 
+     * @return Retourne true si elles sont correct, faux si non
+     */
     public boolean isValueCorrect() {
-        boolean isCorrect = false;
+        boolean isCorrect = false; // Boolean pour savoir si valeur est correct
 
         try {
-            int txtExam01 = Integer.parseInt(txfExam01.getText());
-            int txtExam02 = Integer.parseInt(txfExam02.getText());
-            int txtTP01 = Integer.parseInt(txfTP01.getText());
-            int txtTP02 = Integer.parseInt(txfTP02.getText());
+            int txtExam01 = Integer.parseInt(txfExam01.getText()); // La valeur de l'examen 01
+            int txtExam02 = Integer.parseInt(txfExam02.getText()); // La valeur de l'examen 02
+            int txtTP01 = Integer.parseInt(txfTP01.getText()); // La valeur du tp 01
+            int txtTP02 = Integer.parseInt(txfTP02.getText()); // La valeur du tp 02
 
             if ((txtExam01 <= 100) && (txtExam02 <= 100) && (txtTP01 <= 100) && (txtTP02 <= 100))
                 isCorrect = true;
@@ -341,6 +344,11 @@ public class View extends JFrame {
         return isCorrect;
     }
 
+    /**
+     * Permet d'ajouter/modifier le model de notes.
+     * 
+     * @param ligneSelectionner // La ligne dont nous voulons selectionner.
+     */
     public void addValuesTable(int ligneSelectionner) {
         int dernièreColonne = 5; // Chiffre de la dernière ligne
         int somme = 0; // Somme de tout les colonne d'une ligne
@@ -373,11 +381,11 @@ public class View extends JFrame {
      */
     public void btnAjoutAction() {
         try {
-            int[][] tabTemporaire = Utils.convertT2D(modelNotes);
-            int[] tabIndexDA = new int[tabTemporaire.length];
-            int daChoisit = Integer.parseInt(txfDA.getText());
-            int dernièreLigne = modelNotes.getRowCount();
-            int colonneDA = 0;
+            int[][] tabTemporaire = Utils.convertT2D(modelNotes); // Un tableau temporaire d'entiers
+            int[] tabIndexDA = new int[tabTemporaire.length]; // Un tableau d'index avec le tableau temporaire
+            int daChoisit = Integer.parseInt(txfDA.getText()); // Le DA choisit
+            int dernièreLigne = modelNotes.getRowCount(); // La dernière ligne du model de notes
+            int colonneDA = 0; // La première colonne (le DA)
     
             for (int i = 0; i < tabTemporaire.length; i++) {
                 tabIndexDA[i] = i;
@@ -393,7 +401,7 @@ public class View extends JFrame {
                         JOptionPane.OK_OPTION);
             }
             
-            updateState(modelNotes, modelStats);
+            updateState();
         } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
                         JOptionPane.OK_OPTION);
@@ -409,7 +417,7 @@ public class View extends JFrame {
         try {
             addValuesTable(ligneSelectionner);
 
-            updateState(modelNotes, modelStats);
+            updateState();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
                 JOptionPane.OK_OPTION);
@@ -434,7 +442,7 @@ public class View extends JFrame {
         txfTP01.setText("");
         txfTP02.setText("");
 
-        updateState(modelNotes, modelStats);
+        updateState();
     }
 
     /**
