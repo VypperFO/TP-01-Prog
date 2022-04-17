@@ -32,6 +32,7 @@ public class View extends JFrame {
     JFrame frame = new JFrame("Felix-Olivier Latulippe; 2173242");
 
     public static final DecimalFormat df = new DecimalFormat("0.00");
+    public final String file = "Classes/src/com/company/notes.txt";
 
     public View() throws IOException {
         // @@@@@@@@@@@@@
@@ -48,9 +49,9 @@ public class View extends JFrame {
         // @@@@@@@@@@@@@@@@
         /** Tableau donnee */
 
-        nbNoms = countLinesFile("Classes/src/com/company/notes.txt");
+        nbNoms = countLinesFile(file);
         tabNoms = new String[nbNoms][6];
-        modelNotes = new DefaultTableModel(readFileTab("Classes/src/com/company/notes.txt"), colNames) {
+        modelNotes = new DefaultTableModel(readFileTab(file), colNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -337,8 +338,7 @@ public class View extends JFrame {
             else
                 isCorrect = false;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Entrer une bonne valeur", "Erreur",
-                    JOptionPane.OK_OPTION);
+            messageErreur(1);
         }
 
         return isCorrect;
@@ -372,6 +372,32 @@ public class View extends JFrame {
         }
     }
 
+    public void messageErreur(int choixErreur) {
+        switch (choixErreur) {
+            case 1:
+                JOptionPane.showMessageDialog(frame, "Entrer une bonne valeur", "Erreur",
+                        JOptionPane.OK_OPTION);
+                break;
+            case 2:
+                JOptionPane.showMessageDialog(frame, "Ce DA est déjà présent", "Erreur",
+                        JOptionPane.OK_OPTION);
+                break;
+            case 3:
+                JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
+                        JOptionPane.OK_OPTION);
+                break;
+            case 4:
+                JOptionPane.showMessageDialog(frame, "Aucune données à sauvegarder", "Erreur",
+                        JOptionPane.OK_OPTION);
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Erreur", "Erreur",
+                        JOptionPane.OK_OPTION);
+                break;
+        }
+
+    }
+
     // @@@@@@@@@@@@@@@@@@@@@@@@
     // @@@ Section Listener @@@
     // @@@@@@@@@@@@@@@@@@@@@@@@
@@ -397,14 +423,12 @@ public class View extends JFrame {
                 modelNotes.addRow(new Object[] { "0", "0", "0", "0", "0", "0"});
                 addValuesTable(dernièreLigne);
             } else {
-                JOptionPane.showMessageDialog(frame, "Ce DA est déjà présent", "Erreur",
-                        JOptionPane.OK_OPTION);
+                messageErreur(2);
             }
             
             updateState();
         } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
-                        JOptionPane.OK_OPTION);
+            messageErreur(3);
         }
     }
 
@@ -416,11 +440,9 @@ public class View extends JFrame {
 
         try {
             addValuesTable(ligneSelectionner);
-
             updateState();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur",
-                JOptionPane.OK_OPTION);
+            messageErreur(3);
         }
     }
 
@@ -433,7 +455,7 @@ public class View extends JFrame {
         try {
             modelNotes.removeRow(ligneSelectionner);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Aucun élement selectionner", "Erreur", JOptionPane.ERROR_MESSAGE);
+            messageErreur(3);
         }
 
         txfDA.setText("");
@@ -454,10 +476,9 @@ public class View extends JFrame {
 
         if (reponse == JOptionPane.YES_OPTION) {
             try {
-                sauvegarde("Classes/src/com/company/donnees.txt", supDerniereCol(Utils.convertT2D(modelNotes)));
+                sauvegarde(file, supDerniereCol(Utils.convertT2D(modelNotes)));
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Aucune données à sauvegarder", "Erreur",
-                JOptionPane.OK_OPTION);
+                messageErreur(4);
             }
             System.exit(0);
         } else {
