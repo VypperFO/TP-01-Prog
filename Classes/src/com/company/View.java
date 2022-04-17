@@ -333,7 +333,8 @@ public class View extends JFrame {
             int txtTP01 = Integer.parseInt(txfTP01.getText()); // La valeur du tp 01
             int txtTP02 = Integer.parseInt(txfTP02.getText()); // La valeur du tp 02
 
-            if ((txtExam01 <= 100) && (txtExam02 <= 100) && (txtTP01 <= 100) && (txtTP02 <= 100))
+            if ((txtExam01 <= 100 && txtExam01 >= 0) && (txtExam02 <= 100 && txtExam02 >= 0)
+                    && (txtTP01 <= 100 && txtTP01 >= 0) && (txtTP02 <= 100 && txtTP02 >= 0))
                 isCorrect = true;
             else
                 isCorrect = false;
@@ -372,6 +373,11 @@ public class View extends JFrame {
         }
     }
 
+    /**
+     * Permet de choisir le type d'erreur
+     * 
+     * @param choixErreur Le chiffre correspondant a l'erreur
+     */
     public void messageErreur(int choixErreur) {
         switch (choixErreur) {
             case 1:
@@ -395,7 +401,6 @@ public class View extends JFrame {
                         JOptionPane.OK_OPTION);
                 break;
         }
-
     }
 
     // @@@@@@@@@@@@@@@@@@@@@@@@
