@@ -32,7 +32,7 @@ public class View extends JFrame {
     JFrame frame = new JFrame("Felix-Olivier Latulippe; 2173242");
 
     public static final DecimalFormat df = new DecimalFormat("0.00");
-    public final String file = "Classes/src/com/company/notes.txt";
+    public final String file = "Classes/src/com/company/notes.txt"; // Le fichier choisit 
 
     public View() throws IOException {
         // @@@@@@@@@@@@@
